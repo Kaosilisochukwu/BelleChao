@@ -18,6 +18,7 @@ namespace BelleChao.Web.Controllers
             _logger = logger;
         }
 
+
         public IActionResult Index()
         {
             return View();
