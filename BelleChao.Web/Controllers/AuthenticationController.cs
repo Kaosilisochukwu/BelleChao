@@ -1,9 +1,5 @@
 ﻿using BelleChao.Data.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BelleChao.Web.Controllers
 {
@@ -22,6 +18,20 @@ namespace BelleChao.Web.Controllers
                 return Ok();
             }
             return RedirectToAction("Register");
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Login([FromForm] UserToLoginDTO model)
+        {
+            if (ModelState.IsValid)
+            {
+                return Ok();
+            }
+            return RedirectToAction("Login");
         }
     }
 }
