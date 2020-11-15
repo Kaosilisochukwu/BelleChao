@@ -17,7 +17,7 @@ namespace BelleChao.Web.Controllers
             {
                 return Ok();
             }
-            return RedirectToAction("Register");
+            return View();
         }
 
         public IActionResult Login()
