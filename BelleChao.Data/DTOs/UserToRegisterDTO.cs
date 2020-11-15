@@ -42,9 +42,10 @@ namespace BelleChao.Data.DTOs
         [PasswordPropertyText]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "Password is requried")]
+        [Required(ErrorMessage = "Confirm Password is requried")]
         [PasswordPropertyText]
         [Compare("Password", ErrorMessage = "This field must match the password field")]
+        [DisplayName("Confirm Password")]
         public string ConfirmPassword { get; set; }
 
         [Required(AllowEmptyStrings = false)]
