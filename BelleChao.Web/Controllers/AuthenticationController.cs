@@ -1,12 +1,31 @@
 ﻿using BelleChao.Data.DTOs;
+using BelleChao.Data.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace BelleChao.Web.Controllers
 {
     public class AuthenticationController : Controller
     {
-        public IActionResult Register()
+        public AuthenticationController()
         {
+
+        }
+        public async Task<IActionResult> Register()
+        {
+
+            var baseUrl = HttpContext.Request.Host.ToUriComponent();
+            var url = $"http://{baseUrl}/api/register";
+            HttpClient client = new HttpClient();
+            HttpRequestMessage message = new HttpRequestMessage();
+            message.RequestUri = new Uri(url);
+            var response = await client.SendAsync(message);
+            var dataString = await response.Content.ReadAsStringAsync();
+            
             return View();
         }
 
@@ -15,7 +34,7 @@ namespace BelleChao.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                return Ok();
+
             }
             return View();
         }
