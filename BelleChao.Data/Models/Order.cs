@@ -28,6 +28,6 @@ namespace BelleChao.Data.Models
         [Required]
         [DisplayName("Delivery Address")]
         public string DeliveryAddress { get; set; }
-        public IEnumerable<OrderDetails> OrderDetails { get; set; }
+        public IEnumerable<OrderDetail> OrderDetails { get; set; }
     }
 }
