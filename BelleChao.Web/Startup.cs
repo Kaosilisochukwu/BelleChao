@@ -1,7 +1,9 @@
 using BelleChao.Data;
 using BelleChao.Data.Models;
+using BelleChao.Data.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +26,14 @@ namespace BelleChao.Web
             services.AddControllersWithViews();
             services.AddDbContext<AppDbContext>(options =>
                                             options.UseSqlite(Configuration.GetConnectionString("Value")));
+
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+
+
+            services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+            services.AddHttpContextAccessor();
+            services.AddSession();
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
             services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<AppDbContext>();
             services.AddRazorPages();
         }
@@ -41,6 +51,7 @@ namespace BelleChao.Web
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
 
             app.UseRouting();
             app.UseAuthentication();
