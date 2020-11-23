@@ -39,6 +39,7 @@ namespace BelleChao.Data.Models
         [MinLength(2)]
         [DisplayName("Avatar URL")]
         public string PhotoUrl { get; set; }
+        public string PhotoPublicId { get; set; }
 
         public DateTime DateCreated { get; set; }
     }
