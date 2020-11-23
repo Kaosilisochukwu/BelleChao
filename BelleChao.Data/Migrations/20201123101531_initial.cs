@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BelleChao.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,11 +46,25 @@ namespace BelleChao.Data.Migrations
                     City = table.Column<string>(maxLength: 100, nullable: false),
                     State = table.Column<string>(maxLength: 100, nullable: false),
                     PhotoUrl = table.Column<string>(maxLength: 100, nullable: false),
+                    PhotoPublicId = table.Column<string>(nullable: true),
                     DateCreated = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    CategoryName = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -172,6 +186,7 @@ namespace BelleChao.Data.Migrations
                     Email = table.Column<string>(nullable: false),
                     PhoneNumber = table.Column<string>(nullable: false),
                     PhotoUrl = table.Column<string>(nullable: true),
+                    PhotoPublicId = table.Column<string>(nullable: true),
                     Rating = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -194,11 +209,19 @@ namespace BelleChao.Data.Migrations
                     Name = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: false),
                     PhotoUrl = table.Column<string>(nullable: false),
-                    UnitPrice = table.Column<decimal>(nullable: false)
+                    PhotoPublicId = table.Column<string>(nullable: true),
+                    UnitPrice = table.Column<decimal>(nullable: false),
+                    CategoryId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MenuItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MenuItems_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_MenuItems_Restaurants_RestaurantId",
                         column: x => x.RestaurantId,
@@ -299,6 +322,11 @@ namespace BelleChao.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_MenuItems_CategoryId",
+                table: "MenuItems",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MenuItems_RestaurantId",
                 table: "MenuItems",
                 column: "RestaurantId");
@@ -357,6 +385,9 @@ namespace BelleChao.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Restaurants");

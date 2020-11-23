@@ -81,6 +81,9 @@ namespace BelleChao.Data.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("PhotoPublicId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
                         .HasColumnType("TEXT")
@@ -113,10 +116,28 @@ namespace BelleChao.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("BelleChao.Data.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("BelleChao.Data.Models.MenuItem", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -124,6 +145,9 @@ namespace BelleChao.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhotoPublicId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhotoUrl")
@@ -138,6 +162,8 @@ namespace BelleChao.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("RestaurantId");
 
@@ -231,6 +257,9 @@ namespace BelleChao.Data.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhotoPublicId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhotoUrl")
@@ -381,6 +410,12 @@ namespace BelleChao.Data.Migrations
 
             modelBuilder.Entity("BelleChao.Data.Models.MenuItem", b =>
                 {
+                    b.HasOne("BelleChao.Data.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BelleChao.Data.Models.Restaurant", "Restaurant")
                         .WithMany("MenuItems")
                         .HasForeignKey("RestaurantId")
