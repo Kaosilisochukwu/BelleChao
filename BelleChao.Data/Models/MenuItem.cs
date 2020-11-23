@@ -24,7 +24,13 @@ namespace BelleChao.Data.Models
         [Required]
         public string PhotoUrl { get; set; }
 
+        public string PhotoPublicId { get; set; }
         [Required]
         public decimal UnitPrice { get; set; }
+
+        [Required]
+        [DisplayName("Category Id")]
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
     }
 }
