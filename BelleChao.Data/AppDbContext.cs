@@ -14,5 +14,6 @@ namespace BelleChao.Data
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<Category> Categories { get; set; }
     }
 }
