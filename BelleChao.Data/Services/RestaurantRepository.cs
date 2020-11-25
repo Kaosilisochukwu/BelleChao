@@ -1,4 +1,5 @@
-﻿using BelleChao.Data.Models;
+﻿using BelleChao.Data.DTOs;
+using BelleChao.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace BelleChao.Data.Services
         {
             _context = context;
         }
-        public Task<bool> AddRestaurant(Restaurant restaurant)
+        public Task<bool> AddRestaurant(RestaurantToRegisterDTO restaurant)
         {
             throw new NotImplementedException();
         }

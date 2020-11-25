@@ -1,4 +1,5 @@
-﻿using BelleChao.Data.Models;
+﻿using BelleChao.Data.DTOs;
+using BelleChao.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,7 +9,7 @@ namespace BelleChao.Data.Services
 {
     public interface IRestaurantRepository
     {
-        public Task<bool> AddRestaurant(Restaurant restaurant);
+        public Task<bool> AddRestaurant(RestaurantToRegisterDTO restaurant);
 
         public Task<bool> DeleteRestaurant(string restaurantId);
 
