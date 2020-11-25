@@ -1,40 +1,49 @@
 ﻿using BelleChao.Data.DTOs;
 using BelleChao.Data.Models;
+using BelleChao.Web.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Net.Http;
+using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace BelleChao.Web.Controllers
 {
     public class AuthenticationController : Controller
     {
-        public AuthenticationController()
-        {
+        private readonly Request _requestMaker;
+        private readonly IOptions<CloudinarySettings> _cloudinaryConfig;
+        private readonly UserManager<ApplicationUser> _userManager;
 
+        public AuthenticationController(IOptions<CloudinarySettings> cloudinaryConfig, UserManager<ApplicationUser> userManager)
+        {
+            _requestMaker = new Request(new HttpContextAccessor());
+            _cloudinaryConfig = cloudinaryConfig;
+            _userManager = userManager;
         }
         public async Task<IActionResult> Register()
         {
-
-            var baseUrl = HttpContext.Request.Host.ToUriComponent();
-            var url = $"http://{baseUrl}/api/register";
-            HttpClient client = new HttpClient();
-            HttpRequestMessage message = new HttpRequestMessage();
-            message.RequestUri = new Uri(url);
-            var response = await client.SendAsync(message);
+            var response = await _requestMaker.GetMethod("/api/register");
             var dataString = await response.Content.ReadAsStringAsync();
             
             return View();
         }
 
         [HttpPost]
-        public IActionResult Register([FromForm] UserToRegisterDTO model)
+        public async Task<IActionResult >Register([FromForm] UserToRegisterDTO model)
         {
+            var pic = model.Avatar;
             if (ModelState.IsValid)
             {
-
+              //  var userToUpdate = await _userManager.FindByIdAsync(Id);
+                var managePhoto = new CloudinaryConfig(_cloudinaryConfig);
+                var uplResult = managePhoto.UploadPhoto(model.Avatar);
+              //  userToUpdate.AvatarUrl = uplResult.Url.ToString();
+                //userToUpdate.PublicId = uplResult.PublicId;
+             //   await _userManager.UpdateAsync(userToUpdate);
+              //  var response = await _requestMaker.PostForm("/api/register", model);
+                return View();
             }
             return View();
         }
@@ -44,11 +53,13 @@ namespace BelleChao.Web.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Login([FromForm] UserToLoginDTO model)
+        public async Task<IActionResult> Login(UserToLoginDTO model)
         {
             if (ModelState.IsValid)
             {
-                return Ok();
+                var response = await _requestMaker.PostForm("/api/login", model);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                return View();
             }
             return RedirectToAction("Login");
         }

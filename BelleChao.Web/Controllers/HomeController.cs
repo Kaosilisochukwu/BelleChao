@@ -1,14 +1,12 @@
 ﻿using BelleChao.Data.Models;
 using BelleChao.Data.Services;
 using BelleChao.Web.Models;
+using BelleChao.Web.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -16,25 +14,16 @@ namespace BelleChao.Web.Controllers
 {
     public class HomeController : Controller
     {
-
-        private readonly ILogger<HomeController> _logger;
-        private readonly IRestaurantRepository _restaurantRepo;
+        private readonly Request _requestMaker;
 
         public HomeController(ILogger<HomeController> logger, IRestaurantRepository restaurantRepo)
         {
-
-            _logger = logger;
-            _restaurantRepo = restaurantRepo;
+            _requestMaker = new Request(new HttpContextAccessor());
         }
 
         public async Task<IActionResult> Index()
         {
-            var baseUrl = HttpContext.Request.Host.ToUriComponent();
-            var url = $"http://{baseUrl}/api/home";
-            HttpClient client = new HttpClient();
-            HttpRequestMessage message = new HttpRequestMessage();
-            message.RequestUri = new Uri(url);
-            var response = await client.SendAsync(message);
+            var response = await _requestMaker.GetMethod("/api/home");
             var dataString = await response.Content.ReadAsStringAsync();
             var data = JsonSerializer.Deserialize<IEnumerable<Restaurant>>(dataString);
             return View(data);

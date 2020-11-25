@@ -1,16 +1,13 @@
-﻿using BelleChao.Data.Models;
+﻿using BelleChao.Data.DTOs;
+using BelleChao.Data.Models;
 using BelleChao.Data.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BelleChao.Web.Controllers
 {
-    [Route("api/register")]
+    [Route("api")]
     [ApiController]
     public class ApiAuth : ControllerBase
     {
@@ -29,6 +26,22 @@ namespace BelleChao.Web.Controllers
         {
             var restaurants = await _restaurantRepo.GetRestaurants();
             return Ok(restaurants);
+        }
+
+        [HttpPost]
+        [Route("register")]
+        public  IActionResult Register(UserToRegisterDTO model)
+        {
+            var mode = model;
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("login")]
+        public IActionResult Login(UserToLoginDTO model)
+        {
+            var loginModel = ModelState;
+            return Ok();
         }
     }
 }
