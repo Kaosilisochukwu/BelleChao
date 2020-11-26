@@ -3,10 +3,6 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BelleChao.Web.Utilities
 {
@@ -34,11 +30,11 @@ namespace BelleChao.Web.Utilities
                 var uploadParams = new ImageUploadParams()
                 {
                     File = new FileDescription(avarta.Name, stream),
-                    //Transformation = new Transformation()
-                    //                    .Width(500)
-                    //                    .Height(500)
-                    //                    .Crop("fill")
-                    //                    .Gravity("face")
+                    Transformation = new Transformation()
+                                        .Width(500)
+                                        .Height(500)
+                                        .Crop("fill")
+                                        .Gravity("face")
                 };
                 uploadResult = _cloudinary.Upload(uploadParams);
             }
