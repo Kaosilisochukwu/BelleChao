@@ -14,7 +14,7 @@ namespace BelleChao.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9");
+                .HasAnnotation("ProductVersion", "3.1.10");
 
             modelBuilder.Entity("BelleChao.Data.Models.ApplicationUser", b =>
                 {
@@ -85,9 +85,8 @@ namespace BelleChao.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhotoUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasMaxLength(100);
+                        .HasMaxLength(300);
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");

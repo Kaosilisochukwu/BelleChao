@@ -9,14 +9,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BelleChao.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20201123101531_initial")]
-    partial class initial
+    [Migration("20201201054857_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.9");
+                .HasAnnotation("ProductVersion", "3.1.10");
 
             modelBuilder.Entity("BelleChao.Data.Models.ApplicationUser", b =>
                 {
@@ -87,9 +87,8 @@ namespace BelleChao.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhotoUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT")
-                        .HasMaxLength(100);
+                        .HasMaxLength(300);
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");

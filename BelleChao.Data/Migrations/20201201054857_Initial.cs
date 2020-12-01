@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BelleChao.Data.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,7 +45,7 @@ namespace BelleChao.Data.Migrations
                     Address = table.Column<string>(maxLength: 100, nullable: false),
                     City = table.Column<string>(maxLength: 100, nullable: false),
                     State = table.Column<string>(maxLength: 100, nullable: false),
-                    PhotoUrl = table.Column<string>(maxLength: 100, nullable: false),
+                    PhotoUrl = table.Column<string>(maxLength: 300, nullable: true),
                     PhotoPublicId = table.Column<string>(nullable: true),
                     DateCreated = table.Column<DateTime>(nullable: false)
                 },
