@@ -1,5 +1,6 @@
 ﻿using BelleChao.Data.DTOs;
 using BelleChao.Data.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,27 @@ namespace BelleChao.Data.Services
             throw new NotImplementedException();
         }
 
+        public Task<bool> ApproveRestaurant(string restaurantId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteAvatar(string restaurantId)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<bool> DeleteRestaurant(string restaurantId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> EditRestaurant(Restaurant restaurant)
+        public Task<bool> DisapproveRestaurant(string restaurantId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> EditRestaurant(string restaurantId, RestaurantToUpdateDTO model)
         {
             throw new NotImplementedException();
         }
@@ -42,5 +58,14 @@ namespace BelleChao.Data.Services
             return restaurants;
         }
 
+        public Task<bool> UpdateAvatar(string restaurantId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateAvatar(string restaurantId, IFormFile photo)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using BelleChao.Data.DTOs;
 using BelleChao.Data.Models;
-using System;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BelleChao.Data.Services
@@ -13,11 +12,19 @@ namespace BelleChao.Data.Services
 
         public Task<bool> DeleteRestaurant(string restaurantId);
 
-        public Task<bool> EditRestaurant(Restaurant restaurant);
+        public Task<bool> EditRestaurant(string restaurantId, RestaurantToUpdateDTO model);
 
         public Task<Restaurant> GetRestaurantById(string restaurantId);
 
         public Task<IEnumerable<Restaurant>> GetRestaurants();
+
+        public Task<bool> ApproveRestaurant(string restaurantId);
+
+        public Task<bool> DisapproveRestaurant(string restaurantId);
+
+        public Task<bool> DeleteAvatar(string restaurantId);
+
+        public Task<bool> UpdateAvatar(string restaurantId, IFormFile photo);
 
     }
 }
