@@ -1,6 +1,8 @@
+using AutoMapper;
 using BelleChao.Data;
 using BelleChao.Data.Models;
 using BelleChao.Data.Services;
+using BelleChao.Web.MappingProfiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +34,7 @@ namespace BelleChao.Web
 
             services.AddScoped<IRestaurantRepository, RestaurantRepository>();
             services.AddHttpContextAccessor();
+            services.AddAutoMapper(typeof(MappingProfile));
             services.AddSession();
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
             services.AddIdentityCore<ApplicationUser>().AddEntityFrameworkStores<AppDbContext>();
