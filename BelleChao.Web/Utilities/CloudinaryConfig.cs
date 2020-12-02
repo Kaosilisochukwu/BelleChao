@@ -3,6 +3,7 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace BelleChao.Web.Utilities
 {
@@ -21,7 +22,7 @@ namespace BelleChao.Web.Utilities
             _cloudinary = new Cloudinary(account);
         }
 
-        public ImageUploadResult UploadPhoto(IFormFile avarta)
+        public async Task<ImageUploadResult> UploadPhoto(IFormFile avarta)
         {
             var uploadResult = new ImageUploadResult();
 
@@ -36,10 +37,18 @@ namespace BelleChao.Web.Utilities
                                         .Crop("fill")
                                         .Gravity("face")
                 };
-                uploadResult = _cloudinary.Upload(uploadParams);
+                
+                uploadResult = await _cloudinary.UploadAsync(uploadParams);
             }
 
             return uploadResult;
+        }
+
+        public async Task<DeletionResult> DeletePhoto(string publicId)
+        {
+            DeletionParams @params = new DeletionParams((publicId));
+            var deletionResult = await _cloudinary.DestroyAsync(@params);
+            return deletionResult;
         }
     }
 }

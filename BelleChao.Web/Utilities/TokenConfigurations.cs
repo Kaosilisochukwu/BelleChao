@@ -11,7 +11,7 @@ namespace BelleChao.Web.Utilities
 {
     public class TokenConfigurations
     {
-        public string GenerateToken(ApplicationUser user, IConfiguration config, List<string> roles)
+        public static string GenerateToken(ApplicationUser user, IConfiguration config, List<string> roles)
         {
             var claims = new List<Claim>
             {
