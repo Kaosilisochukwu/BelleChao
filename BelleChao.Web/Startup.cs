@@ -33,6 +33,7 @@ namespace BelleChao.Web
 
 
             services.AddScoped<IRestaurantRepository, RestaurantRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddHttpContextAccessor();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddSession();
