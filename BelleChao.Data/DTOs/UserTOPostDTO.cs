@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +6,7 @@ using System.Text;
 
 namespace BelleChao.Data.DTOs
 {
-    public class UserToRegisterDTO
+    public class UserTOPostDTO
     {
         [Required(AllowEmptyStrings = false, ErrorMessage = "Id field must not be empty")]
         [MaxLength(50, ErrorMessage = "Firstname must not have more than 50 characters")]
@@ -39,11 +38,11 @@ namespace BelleChao.Data.DTOs
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Password is requried")]
-        [DataType(DataType.Password)]
+        [PasswordPropertyText]
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Confirm Password is requried")]
-        [DataType(DataType.Password)]
+        [PasswordPropertyText]
         [Compare("Password", ErrorMessage = "This field must match the password field")]
         [DisplayName("Confirm Password")]
         public string ConfirmPassword { get; set; }
@@ -57,7 +56,8 @@ namespace BelleChao.Data.DTOs
         [MinLength(2)]
         public string State { get; set; }
 
-        public IFormFile Avatar { get; set; }
+        public string PhotoUrl { get; set; }
+        public string PhotoPublicId { get; set; }
 
         public DateTime DateCreated { get; set; } = DateTime.Now;
     }
