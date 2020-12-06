@@ -23,7 +23,12 @@ namespace BelleChao.Data.Models
         public Restaurant Restaurant { get; set; }
 
         [Required]
-        public bool IsDelivered { get; set; }
+        [DisplayName("Total Amount")]
+        public decimal TotalAmount { get; set; }
+
+        public bool IsDelivered { get; set; } = false;
+        public bool IsDispatched { get; set; } = false;
+        public bool IsActive { get; set; } = true;
 
         [Required]
         [DisplayName("Delivery Address")]

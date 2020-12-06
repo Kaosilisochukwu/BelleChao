@@ -34,8 +34,7 @@ namespace BelleChao.Data.Models
         [MinLength(2)]
         public string State { get; set; }
 
-        [Required(AllowEmptyStrings = false)]
-        [MaxLength(100, ErrorMessage = "Image Url must not have more than 100 characters")]
+        [MaxLength(300, ErrorMessage = "Image Url must not have more than 100 characters")]
         [MinLength(2)]
         [DisplayName("Avatar URL")]
         public string PhotoUrl { get; set; }
