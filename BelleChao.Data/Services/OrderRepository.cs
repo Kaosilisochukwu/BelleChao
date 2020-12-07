@@ -1,62 +1,128 @@
 ﻿using BelleChao.Data.DTOs;
 using BelleChao.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BelleChao.Data.Services
 {
     public class OrderRepository : IOrderRepository
     {
-        public Task<bool> ApproveOrder(string orderId)
+        private readonly AppDbContext _context;
+
+        public OrderRepository(AppDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        public async Task<bool> CancelOrder(string orderId)
+        {
+            var orders = await GetOrders();
+            var order = _context.Orders.FirstOrDefault(order => order.Id == orderId);
+
+            if (order == null)
+            {
+                return false;
+            }
+            order.IsActive = false;
+            var updateResult = _context.Orders.Update(order);
+            _context.SaveChanges();
+            return true;
         }
 
-        public Task<bool> CancelOrder(string orderId)
+        public async Task<bool> DeclineOrder(string orderId)
         {
-            throw new NotImplementedException();
+            var orders = await GetOrders();
+            var order = _context.Orders.FirstOrDefault(order => order.Id == orderId);
+
+            if (order == null)
+            {
+                return false;
+            }
+            order.IsActive = false;
+            var updateResult = _context.Orders.Update(order);
+            _context.SaveChanges();
+            return true;
         }
 
-        public Task<bool> DeclineOrder(string orderId)
+        public async Task<bool> DispatchOrder(string orderId)
         {
-            throw new NotImplementedException();
+            var orders = await GetOrders();
+            var order = _context.Orders.FirstOrDefault(order => order.Id == orderId);
+
+            if (order == null)
+            {
+                return false;
+            }
+            order.IsDispatched = false;
+            var updateResult = _context.Orders.Update(order);
+            _context.SaveChanges();
+            return true;
         }
 
-        public Task<bool> DispatchOrder(string orderId)
+        public async Task<IEnumerable<Order>> GetOrders()
         {
-            throw new NotImplementedException();
+           return await _context.Orders.ToListAsync();
         }
 
-        public Task<IEnumerable<Order>> GetOrders()
+        public async Task<IEnumerable<Order>> GetOrdersById(string orderId)
         {
-            throw new NotImplementedException();
+            return await _context.Orders.Where(order => order.Id == orderId).ToListAsync();
         }
 
-        public Task<IEnumerable<Order>> GetOrdersById(string orderId)
+        public async Task<IEnumerable<Order>> GetOrdersByRestaurant(string restaurantId)
         {
-            throw new NotImplementedException();
+            return await _context.Orders.Where(order => order.RestaurantId == restaurantId).ToListAsync();
         }
 
-        public Task<IEnumerable<Order>> GetOrdersByRestaurant(string restaurantId)
+        public async Task<IEnumerable<Order>> GetOrdersByUserId(string userId)
         {
-            throw new NotImplementedException();
+            return await _context.Orders.Where(order => order.UserId == userId).ToListAsync();
         }
 
-        public Task<IEnumerable<Order>> GetOrdersByUserId(string userId)
+        public async Task<string> PlaceOrder(OrderToPlaceDTO order)
         {
-            throw new NotImplementedException();
+            var id = generateId();
+            var orderPlaceResult = _context.Orders.Add(new Order
+            {
+                Id = id,
+                DeliveryAddress = order.DeliveryAddress,
+                OrderDetails = order.OrderDetails,
+                UserId = order.UserId,
+                IsActive = true,
+                TotalAmount = order.OrderDetails.Sum(orderDetail => orderDetail.Price * orderDetail.Quantity),
+                RestaurantId = order.RestaurantId,
+            }); 
+            if(orderPlaceResult.State == EntityState.Added)
+            {
+                await _context.SaveChangesAsync();
+                return id;
+            }
+            return "Not Placed";
         }
 
-        public Task<string> PlaceOrder(OrderToPlaceDTO order)
+        string generateId()
         {
-            throw new NotImplementedException();
+            var id = Guid.NewGuid().ToString();
+            while(_context.Orders.Where(order => order.Id == id) != null)
+            {
+                id = Guid.NewGuid().ToString();
+            }
+            return id;
         }
 
-        public Task<bool> RecieveOrder(string orderId)
+        public async Task<int> RecieveOrder(string orderId)
         {
-            throw new NotImplementedException();
+            int updateResult = 0;
+            var order = _context.Orders.FirstOrDefault(order => order.Id == orderId);
+            if (order != null)
+            {
+                order.IsDelivered = true;
+                updateResult = await _context.SaveChangesAsync();
+                return updateResult;
+            }
+            return updateResult;
         }
     }
 }

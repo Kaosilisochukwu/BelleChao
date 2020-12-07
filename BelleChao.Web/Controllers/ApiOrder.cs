@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace BelleChao.Web.Controllers
 {
     [ApiController]
+    [Route("api/order")]
     public class ApiOrder : ControllerBase
     {
         private readonly IOrderRepository _orderRepo;
@@ -15,6 +16,8 @@ namespace BelleChao.Web.Controllers
         {
             _orderRepo = orderRepo;
         }
+
+
         public async Task<IActionResult> GetOrders()
         {
             try
@@ -31,6 +34,7 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();
             }
         }
+        [Route("{userId}")]
         public async Task<IActionResult> GetOrdersByUserId(string userId)
         {
             try
@@ -47,6 +51,8 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();
             }
         }
+
+        [Route("{restaurantId}")]
         public async Task<IActionResult> GetOrdersByRestaurant(string restaurantId)
         {
             try
@@ -64,6 +70,7 @@ namespace BelleChao.Web.Controllers
             }
         }
 
+        [Route("{orderId}")]
         public async Task<IActionResult> GetOrdersById(string orderId)
         {
             try
@@ -80,6 +87,7 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();
             }
         }
+        [HttpPost]
         public async Task<IActionResult> PlaceOrder(OrderToPlaceDTO order)
         {
             try
@@ -96,6 +104,7 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();   
             }
         }
+        [Route("{orderId}/cancel")]
         public async Task<IActionResult> CancelOrder(string orderId)
         {
             try
@@ -105,7 +114,7 @@ namespace BelleChao.Web.Controllers
                 {
                     return BadRequest();
                 }
-                return Ok("Order Successfully cancelled");
+                return Ok("Cancelled");
             }
             catch (Exception)
             {
@@ -113,22 +122,8 @@ namespace BelleChao.Web.Controllers
             }
         }
 
-        public async Task<IActionResult> ApproveOrder(string orderId)
-        {
-            try
-            {
-                var approved = await _orderRepo.ApproveOrder(orderId);
-                if (!approved)
-                {
-                    return BadRequest();
-                }
-                return Ok("Order has been successfully approved");
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-        }
+        [Route("{orderId}/decline")]
+        [HttpPatch]
         public async Task<IActionResult> DeclineOrder(string orderId)
         {
             try
@@ -138,14 +133,15 @@ namespace BelleChao.Web.Controllers
                 {
                     return BadRequest();
                 }
-                return Ok("Order has been successfully declined");
+                return Ok("Declined");
             }
             catch (Exception)
             {
                 return BadRequest();
             }
         }
-
+        [Route("{orderId}/dispatch")]
+        [HttpPatch]
         public async Task<IActionResult> DispatchOrder(string orderId)
         {
             try
@@ -155,30 +151,30 @@ namespace BelleChao.Web.Controllers
                 {
                     return BadRequest();
                 }
-                return Ok("Order has been successfully dispatced");
+                return Ok("Dispatched");
             }
             catch (Exception)
             {
                 return BadRequest();
             }
         }
-
+        [Route("{orderId}/recieve")]
+        [HttpPatch]
         public async Task<IActionResult> RecieveOrder(string orderId)
         {
             try
             {
                 var recieved = await _orderRepo.RecieveOrder(orderId);
-                if (!recieved)
+                if (recieved < 1)
                 {
                     return BadRequest();
                 }
-                return Ok("Order has been successfully recieved");
+                return Ok("Recieved");
             }
             catch (Exception)
             {
                 return BadRequest();
             }
         }
-        
     }
 }
