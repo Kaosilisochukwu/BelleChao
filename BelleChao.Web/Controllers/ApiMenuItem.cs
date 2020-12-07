@@ -1,4 +1,6 @@
-﻿using BelleChao.Data.Models;
+﻿using AutoMapper;
+using BelleChao.Data.DTOs;
+using BelleChao.Data.Models;
 using BelleChao.Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,19 +13,24 @@ namespace BelleChao.Web.Controllers
 {
     [ApiController]
     [Authorize(Roles = "vendor")]
+    [Route("api/menu")]
     public class ApiMenuItem : ControllerBase
     {
         private readonly IMenuItemRepository _menuItemRepo;
+        private readonly IMapper _mapper;
 
-        public ApiMenuItem(IMenuItemRepository menuItemRepo)
+        public ApiMenuItem(IMenuItemRepository menuItemRepo, IMapper mapper)
         {
             _menuItemRepo = menuItemRepo;
+            _mapper = mapper;
         }
 
-        public async Task<IActionResult> AddmenuItem(MenuItem menuItem)
+        [Route("add")]
+        public async Task<IActionResult> AddmenuItem(MenuItemToPost model)
         {
             try
             {
+                var menuItem = _mapper.Map<MenuItemToPost, MenuItem>(model);
                 var addItemResult = await _menuItemRepo.AddmenuItem(menuItem);
                 if (addItemResult == null)
                 {
@@ -37,12 +44,13 @@ namespace BelleChao.Web.Controllers
             }
         }
         
+        [Route("delete")]
         public async Task<IActionResult> DeletMenuItem(string id)
         {
             try
             {
                 var deletionResult = await _menuItemRepo.DeletMenuItem(id);
-                if (!deletionResult)
+                if (deletionResult < 1)
                 {
                     return BadRequest();
                 }
@@ -54,6 +62,7 @@ namespace BelleChao.Web.Controllers
             }
         }
         
+        [Route("edit")]
         public async Task<IActionResult> EditMenuItem(MenuItem item)
         {
             try
@@ -71,6 +80,8 @@ namespace BelleChao.Web.Controllers
             }
         }
         
+        [Route("{id}")]
+        [HttpGet]
         public async Task<IActionResult> GetMenuItemById(string id)
         {
             try
@@ -105,6 +116,7 @@ namespace BelleChao.Web.Controllers
             }
         }
         
+        [Route("{restaurantId}")]
         public async Task<IActionResult> GetMenuItems(string restaurantId)
         {
             try
