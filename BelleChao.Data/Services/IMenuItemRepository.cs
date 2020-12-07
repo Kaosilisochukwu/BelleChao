@@ -1,23 +1,22 @@
-﻿using BelleChao.Data.Models;
-using System;
+﻿using BelleChao.Data.DTOs;
+using BelleChao.Data.Models;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BelleChao.Data.Services
 {
     public interface IMenuItemRepository
     {
-        public Task<bool> AddmenuItem(MenuItem menuItem);
+        Task<string> AddmenuItem(MenuItem menuItem);
 
-        public Task<bool> DeletMenuItem(string id);
+        Task<int> DeletMenuItem(string id);
 
-        public Task<bool> EditMenuItem(MenuItem item);
+        Task<string> EditMenuItem(MenuItem item);
 
-        public Task<MenuItem> GetMenuItemById(string id);
+        Task<MenuItem> GetMenuItemById(string id);
 
-        public Task<IEnumerable<MenuItem>> GetMenuItems();
-
-        public Task<IEnumerable<MenuItem>> GetMenuItems(string restaurantId);
+        Task<IEnumerable<MenuItem>> GetMenuItems();
+        Task<int> DeleteAllRestaurantMenuItems(string restaurantId);
+        Task<IEnumerable<MenuItem>> GetMenuItemsByRestaurantId(string restaurantId);
     }
 }
