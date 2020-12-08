@@ -1,34 +1,54 @@
-﻿using BelleChao.Data.DTOs;
+﻿using AutoMapper;
+using BelleChao.Data.DTOs;
+using BelleChao.Data.Models;
 using BelleChao.Data.Services;
+using BelleChao.Web.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BelleChao.Web.Controllers
 {
     [Route("api/restaurants")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class ApiRestaurant : ControllerBase
     {
         private readonly IRestaurantRepository _restrurantRepo;
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApiRestaurant(IRestaurantRepository restrurantRepo)
+        public ApiRestaurant(IRestaurantRepository restrurantRepo, CloudinaryConfig cloudinaryConfig, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _restrurantRepo = restrurantRepo;
+            _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost]
         [Route("register")]
-        public IActionResult Register(RestaurantToRegisterDTO model)
+        public async Task<IActionResult> Register(RestaurantToPost model)
         {
             if (ModelState.IsValid)
             {
-                _restrurantRepo.AddRestaurant(model);
+                var restaurant = _mapper.Map<RestaurantToPost, Restaurant>(model);
+                var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                restaurant.OwnerId = userId;
+                
+                var registerRestaurantResult = await _restrurantRepo.AddRestaurant(restaurant);
+                if(registerRestaurantResult != "Not sucessful")
+                {
+                    return Ok(registerRestaurantResult);
+                }
+                return BadRequest(registerRestaurantResult);
             }
-            return Ok();
+            return BadRequest();
         }
         
+        [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetRestaurants()
         {
             try
@@ -111,8 +131,8 @@ namespace BelleChao.Web.Controllers
         {
             try
             {
-                var restaurantToEdit = await _restrurantRepo.EditRestaurant(restaurantId, model);
-                if (restaurantToEdit)
+                var restaurantEditResponse = await _restrurantRepo.EditRestaurant(restaurantId, model);
+                if (restaurantEditResponse > 0)
                 {
                     return Ok();
                 }
@@ -130,7 +150,7 @@ namespace BelleChao.Web.Controllers
             try
             {
                 var avatarDeletionResult = await _restrurantRepo.DeleteAvatar(restaurantId);
-                if (avatarDeletionResult)
+                if (avatarDeletionResult > 0)
                 {
                     return Ok();
                 }
@@ -144,11 +164,11 @@ namespace BelleChao.Web.Controllers
 
         [Route("{restaurantId}/updateAvatar")]
         [HttpPatch]
-        public async Task<IActionResult> UpdateAvatar(string restaurantId, IFormFile photo)
+        public async Task<IActionResult> UpdateAvatar(string restaurantId, string photoUrl)
         {
             try
             {
-                var avatarDeletionResult = await _restrurantRepo.UpdateAvatar(restaurantId, photo);
+                var avatarDeletionResult = await _restrurantRepo.UpdateAvatar(restaurantId, photoUrl);
                 if (avatarDeletionResult)
                 {
                     return Ok();
