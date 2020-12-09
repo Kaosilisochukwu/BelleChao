@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BelleChao.Data.Services
@@ -12,44 +12,98 @@ namespace BelleChao.Data.Services
     public class RestaurantRepository : IRestaurantRepository
     {
         private readonly AppDbContext _context;
+        private readonly IMenuItemRepository _menuItemsRepo;
 
-        public RestaurantRepository(AppDbContext context)
+        public RestaurantRepository(AppDbContext context, IMenuItemRepository menuItemsRepo)
         {
             _context = context;
+            _menuItemsRepo = menuItemsRepo;
         }
-        public Task<bool> AddRestaurant(RestaurantToRegisterDTO restaurant)
+        public async Task<string> AddRestaurant(Restaurant restaurant)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> ApproveRestaurant(string restaurantId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteAvatar(string restaurantId)
-        {
-            throw new NotImplementedException();
+            restaurant.Id = generateId();
+            var restaurantAdditionResult = await _context.Restaurants.AddAsync(restaurant);
+            if(restaurantAdditionResult.State == EntityState.Added)
+            {
+                await _context.SaveChangesAsync();
+                return restaurant.Id;
+            }
+            return "Not sucessful";
         }
 
-        public Task<bool> DeleteRestaurant(string restaurantId)
+        public async Task<int> ApproveRestaurant(string restaurantId)
         {
-            throw new NotImplementedException();
+            var updateCount = 0;
+            var restaurant = await _context.Restaurants.FirstOrDefaultAsync(restaurant => restaurant.Id == restaurantId);
+            restaurant.IsApproved = true;
+            var updateResult = _context.Restaurants.Update(restaurant);
+            if(updateResult.State == EntityState.Modified)
+            {
+                updateCount = await _context.SaveChangesAsync();
+            }
+            return updateCount;
         }
 
-        public Task<bool> DisapproveRestaurant(string restaurantId)
+        public async Task<int> DeleteAvatar(string restaurantId)
         {
-            throw new NotImplementedException();
+            var updateCount = 0;
+            var restaurant = await _context.Restaurants.FirstOrDefaultAsync(restaurant => restaurant.Id == restaurantId);
+            restaurant.PhotoPublicId = null;
+            restaurant.PhotoUrl = null;
+            var updateResult = _context.Restaurants.Update(restaurant);
+            if (updateResult.State == EntityState.Deleted)
+            {
+                updateCount = await _context.SaveChangesAsync();
+            }
+            return updateCount;
         }
 
-        public Task<bool> EditRestaurant(string restaurantId, RestaurantToUpdateDTO model)
+        public async Task<int> DeleteRestaurant(string restaurantId)
         {
-            throw new NotImplementedException();
+            var updateCount = 0;
+            var restaurant = await _context.Restaurants.FirstOrDefaultAsync(restaurant => restaurant.Id == restaurantId);
+            var updateResult = _context.Restaurants.Remove(restaurant);
+            if (updateResult.State == EntityState.Deleted)
+            {
+                await _menuItemsRepo.DeleteAllRestaurantMenuItems(restaurantId);
+                updateCount = await _context.SaveChangesAsync();
+            }
+            return updateCount;
         }
 
-        public Task<Restaurant> GetRestaurantById(string restaurantId)
+        public async Task<int> DisapproveRestaurant(string restaurantId)
         {
-            throw new NotImplementedException();
+            int updateResult = 0;
+            var restaurant = _context.Restaurants.FirstOrDefault(restaurant => restaurant.Id == restaurantId);
+            if (restaurant != null)
+            {
+                restaurant.IsApproved = false;
+                updateResult = await _context.SaveChangesAsync();
+            }
+            return updateResult;
+        }
+
+        public async Task<int> EditRestaurant(string restaurantId, RestaurantToUpdateDTO model)
+        {
+            int updateResult = 0;
+            var restaurant = _context.Restaurants.FirstOrDefault(restaurant => restaurant.Id == restaurantId);
+            if (restaurant != null)
+            {
+                restaurant.Name = model.Name;
+                restaurant.PhoneNumber = model.PhoneNumber;
+                restaurant.Email = model.Email;
+                restaurant.Address = model.Address;
+                restaurant.City = model.City;
+                restaurant.State = model.State;
+                updateResult = await _context.SaveChangesAsync();
+            }
+            return updateResult;
+        }
+
+        public async Task<Restaurant> GetRestaurantById(string restaurantId)
+        {
+            var restaurant = await _context.Restaurants.FirstOrDefaultAsync(restaurant => restaurant.Id == restaurantId);
+            return restaurant;
         }
 
         public async Task<IEnumerable<Restaurant>> GetRestaurants()
@@ -58,14 +112,28 @@ namespace BelleChao.Data.Services
             return restaurants;
         }
 
-        public Task<bool> UpdateAvatar(string restaurantId)
+        public async Task<int> UpdateAvatar(string restaurantId, AvatarToUpdateDTO avatarDetails)
         {
-            throw new NotImplementedException();
+            var rowsChanged = 0;
+            var restaurant = await _context.Restaurants.FirstOrDefaultAsync(restaurant => restaurant.Id == restaurantId);
+            restaurant.PhotoUrl = avatarDetails.PhotoUrl;
+            restaurant.PhotoPublicId = avatarDetails.PhotoPublicId;
+            var updateResult = _context.Update(restaurant);
+            if(updateResult.State == EntityState.Modified)
+            {
+                rowsChanged = await _context.SaveChangesAsync();
+            }
+            return rowsChanged;
         }
 
-        public Task<bool> UpdateAvatar(string restaurantId, IFormFile photo)
+        string generateId()
         {
-            throw new NotImplementedException();
+            var id = Guid.NewGuid().ToString();
+            while (_context.Restaurants.Where(item => item.Id == id) != null)
+            {
+                id = Guid.NewGuid().ToString();
+            }
+            return id;
         }
     }
 }
