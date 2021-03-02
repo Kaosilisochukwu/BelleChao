@@ -12,12 +12,10 @@ namespace BelleChao.Data.Services
     public class RestaurantRepository : IRestaurantRepository
     {
         private readonly AppDbContext _context;
-        private readonly IMenuItemRepository _menuItemsRepo;
 
-        public RestaurantRepository(AppDbContext context, IMenuItemRepository menuItemsRepo)
+        public RestaurantRepository(AppDbContext context)
         {
             _context = context;
-            _menuItemsRepo = menuItemsRepo;
         }
         public async Task<string> AddRestaurant(Restaurant restaurant)
         {
@@ -65,8 +63,14 @@ namespace BelleChao.Data.Services
             var updateResult = _context.Restaurants.Remove(restaurant);
             if (updateResult.State == EntityState.Deleted)
             {
-                await _menuItemsRepo.DeleteAllRestaurantMenuItems(restaurantId);
-                updateCount = await _context.SaveChangesAsync();
+                var menuItems = _context.MenuItems.Where(menuItem => menuItem.RestaurantId == restaurantId);
+                _context.MenuItems.RemoveRange(menuItems);
+                var deletionResult = await _context.SaveChangesAsync();
+                if(deletionResult > 0)
+                {
+                    _context.Restaurants.Remove(restaurant);
+                    return await _context.SaveChangesAsync();
+                }
             }
             return updateCount;
         }

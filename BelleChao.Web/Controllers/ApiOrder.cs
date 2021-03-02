@@ -17,7 +17,7 @@ namespace BelleChao.Web.Controllers
             _orderRepo = orderRepo;
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> GetOrders()
         {
             try
@@ -34,7 +34,7 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();
             }
         }
-        [Route("{userId}")]
+        [HttpGet("{userId}")]
         public async Task<IActionResult> GetOrdersByUserId(string userId)
         {
             try
@@ -52,7 +52,7 @@ namespace BelleChao.Web.Controllers
             }
         }
 
-        [Route("{restaurantId}")]
+        [HttpGet("{restaurantId}")]
         public async Task<IActionResult> GetOrdersByRestaurant(string restaurantId)
         {
             try
@@ -70,7 +70,7 @@ namespace BelleChao.Web.Controllers
             }
         }
 
-        [Route("{orderId}")]
+        [HttpGet("{orderId}")]
         public async Task<IActionResult> GetOrdersById(string orderId)
         {
             try
@@ -104,7 +104,7 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();   
             }
         }
-        [Route("{orderId}/cancel")]
+        [HttpPut("{orderId}/cancel")]
         public async Task<IActionResult> CancelOrder(string orderId)
         {
             try
@@ -122,8 +122,7 @@ namespace BelleChao.Web.Controllers
             }
         }
 
-        [Route("{orderId}/decline")]
-        [HttpPatch]
+        [HttpPatch("{orderId}/decline")]
         public async Task<IActionResult> DeclineOrder(string orderId)
         {
             try
@@ -140,8 +139,7 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();
             }
         }
-        [Route("{orderId}/dispatch")]
-        [HttpPatch]
+        [HttpPut("{orderId}/dispatch")]
         public async Task<IActionResult> DispatchOrder(string orderId)
         {
             try
@@ -158,8 +156,7 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();
             }
         }
-        [Route("{orderId}/recieve")]
-        [HttpPatch]
+        [HttpPut("{orderId}/recieve")]
         public async Task<IActionResult> RecieveOrder(string orderId)
         {
             try

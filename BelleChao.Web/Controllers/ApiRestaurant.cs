@@ -27,8 +27,7 @@ namespace BelleChao.Web.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        [HttpPost]
-        [Route("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RestaurantToPost model)
         {
             if (ModelState.IsValid)
@@ -62,7 +61,7 @@ namespace BelleChao.Web.Controllers
             }
         }
 
-        [Route("{Id}")]
+        [HttpGet("{Id}")]
         public async Task<IActionResult> GetRestaurantById(string Id)
         {
             try
@@ -80,8 +79,7 @@ namespace BelleChao.Web.Controllers
             }
         }
 
-        [Route("{restaurantId}")]
-        [HttpDelete]
+        [HttpDelete("{restaurantId}")]
         public async Task<IActionResult> DeleteRestaurant(string restaurantId)
         {
             try
@@ -95,23 +93,25 @@ namespace BelleChao.Web.Controllers
             }
         }
 
-        [Route("{restaurantId}/approve")]
-        [HttpPatch]
+        [HttpPut("{restaurantId}/approve")]
         public async Task<IActionResult> ApproveRestaurant(string restaurantId)
         {
             try
             {
                 var approvalResult = await _restrurantRepo.ApproveRestaurant(restaurantId);
-                return Ok();
+                if(approvalResult > 0)
+                {
+                    return Ok($"Restaurant with Id {restaurantId} has been approved");
+                }
+                return Ok($"Restaurants with Id {restaurantId} does not exist");
             }
             catch (Exception)
             {
-                return BadRequest();
+                return BadRequest("Unable to update restaurant status");
             }
         }
         [Authorize(Roles = "Admin")]
-        [Route("{restaurantId}/disapprove")]
-        [HttpPatch]
+        [HttpPut("{restaurantId}/disapprove")]
         public async Task<IActionResult> DisapproveRestaurant(string restaurantId)
         {
             try
@@ -125,8 +125,7 @@ namespace BelleChao.Web.Controllers
             }
         }
         [Authorize(Roles = "Admin")]
-        [Route("{restaurantId}/update")]
-        [HttpPatch]
+        [HttpPut("{restaurantId}")]
         public async Task<IActionResult> UpdateRestaurant(string restaurantId, RestaurantToUpdateDTO model)
         {
             try
@@ -143,8 +142,7 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();
             }
         }
-        [Route("{restaurantId}/deleteAvatar")]
-        [HttpPatch]
+        [HttpPut("{restaurantId}/deleteAvatar")]
         public async Task<IActionResult> DeleteAvatar(string restaurantId)
         {
             try
@@ -162,14 +160,13 @@ namespace BelleChao.Web.Controllers
             }
         }
 
-        [Route("{restaurantId}/updateAvatar")]
-        [HttpPatch]
-        public async Task<IActionResult> UpdateAvatar(string restaurantId, string photoUrl)
+        [HttpPut("{restaurantId}/updateAvatar")]
+        public async Task<IActionResult> UpdateAvatar(string restaurantId, AvatarToUpdateDTO avatarDetails)
         {
             try
             {
-                var avatarDeletionResult = await _restrurantRepo.UpdateAvatar(restaurantId, photoUrl);
-                if (avatarDeletionResult)
+                var avatarDeletionResult = await _restrurantRepo.UpdateAvatar(restaurantId, avatarDetails);
+                if (avatarDeletionResult > 0)
                 {
                     return Ok();
                 }

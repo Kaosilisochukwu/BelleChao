@@ -40,6 +40,7 @@ namespace BelleChao.Data.Models
         [Phone]
         [DisplayName("Phone Number")]
         public string PhoneNumber { get; set; }
+        public bool IsApproved { get; set; } = true;
 
         public string PhotoUrl { get; set; }
 

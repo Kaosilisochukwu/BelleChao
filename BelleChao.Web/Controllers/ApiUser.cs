@@ -28,7 +28,7 @@ namespace BelleChao.Web.Controllers
             return Ok();
         }
 
-        [Route("{Id}/update")]
+        [HttpPut("{Id}/update")]
         public async Task<IActionResult> UpdateProfile(string Id, UsertoUpdate model)
         {
             var user = _userManager.Users.FirstOrDefault(user => user.Id == Id);
@@ -51,8 +51,8 @@ namespace BelleChao.Web.Controllers
             return BadRequest();
         }
 
-        [Route("{Id}/updatephoto/{publicId}")]
-        public async Task<IActionResult> UpdatePhoto(string Id, string publicId, IFormFile photo)
+        [HttpPut("{Id}/updatephoto")]
+        public async Task<IActionResult> UpdatePhoto(string Id, IFormFile photo)
         {
             if (ModelState.IsValid)
             {
@@ -61,7 +61,7 @@ namespace BelleChao.Web.Controllers
                 {
                     return BadRequest();
                 }
-                var deletionResult = _cloudinryConfig.DeletePhoto(publicId);
+                var deletionResult = _cloudinryConfig.DeletePhoto(user.PhotoPublicId);
                 if(deletionResult.Status == TaskStatus.RanToCompletion)
                 {
                     var upoadResult = await _cloudinryConfig.UploadPhoto(photo);
@@ -75,13 +75,32 @@ namespace BelleChao.Web.Controllers
                 }
                 else
                 {
-                    await UpdatePhoto(Id, publicId, photo);
+                    await UpdatePhoto(Id, photo);
                 }
             }
             return Ok();
         }
 
-        [Route("{id}/changePassword")]
+        [HttpDelete("{id}/deletephoto")]
+        public async Task<IActionResult> DeleteProfilePicture(string id)
+        {
+            var user = _userManager.Users.FirstOrDefault(user => user.Id == id);
+            if(user == null)
+            {
+                return BadRequest();
+            }
+            var deletionResult = await _cloudinryConfig.DeletePhoto(user.PhotoPublicId);
+            user.PhotoPublicId = null;
+            user.PhotoUrl = null;
+            var userUpdateResult = await _userManager.UpdateAsync(user);
+            if (userUpdateResult.Succeeded)
+            {
+                return Ok();
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("{id}/changePassword")]
         public async Task<IActionResult> ChangePassword(string Id, PasswordChangeDto model)
         {
             if (ModelState.IsValid)

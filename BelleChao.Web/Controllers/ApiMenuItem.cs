@@ -25,7 +25,7 @@ namespace BelleChao.Web.Controllers
             _mapper = mapper;
         }
 
-        [Route("add")]
+        [HttpPost("add")]
         public async Task<IActionResult> AddmenuItem(MenuItemToPost model)
         {
             try
@@ -44,7 +44,7 @@ namespace BelleChao.Web.Controllers
             }
         }
         
-        [Route("delete")]
+        [HttpDelete("{id}/delete")]
         public async Task<IActionResult> DeletMenuItem(string id)
         {
             try
@@ -62,7 +62,7 @@ namespace BelleChao.Web.Controllers
             }
         }
         
-        [Route("edit")]
+        [HttpPut("edit")]
         public async Task<IActionResult> EditMenuItem(MenuItem item)
         {
             try
@@ -79,9 +79,8 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();
             }
         }
-        
-        [Route("{id}")]
-        [HttpGet]
+
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetMenuItemById(string id)
         {
             try
@@ -98,7 +97,7 @@ namespace BelleChao.Web.Controllers
                 return BadRequest();
             }
         }
-        
+        [HttpGet]
         public async Task<IActionResult> GetMenuItems()
         {
             try
@@ -116,7 +115,7 @@ namespace BelleChao.Web.Controllers
             }
         }
         
-        [Route("{restaurantId}")]
+        [HttpGet("{restaurantId}")]
         public async Task<IActionResult> GetMenuItems(string restaurantId)
         {
             try

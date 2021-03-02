@@ -12,7 +12,13 @@ namespace BelleChao.Web.MappingProfiles
     {
         public MappingProfile()
         {
-            CreateMap<ApplicationUser, UserToRegisterDTO>();
+            CreateMap<ApplicationUser, UserTOPostDTO>();
+            CreateMap<Restaurant, RestaurantToPost>();
+            CreateMap<UserTOPostDTO, UserToRegisterDTO>();
+            CreateMap<RestaurantToPost, RestaurantToRegisterDTO>();
+            CreateMap<MenuItemToPost, MenuItemToAddDTO>();
+            CreateMap<MenuItem, MenuItemToPost>();
+            CreateMap<Restaurant, RestaurantToUpdateDTO>();
         }
     }
 }

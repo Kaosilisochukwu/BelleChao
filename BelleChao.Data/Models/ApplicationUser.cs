@@ -40,6 +40,6 @@ namespace BelleChao.Data.Models
         public string PhotoUrl { get; set; }
         public string PhotoPublicId { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        public DateTime DateCreated { get; set; } = DateTime.Now;
     }
 }

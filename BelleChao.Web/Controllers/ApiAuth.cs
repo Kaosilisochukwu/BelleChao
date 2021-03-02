@@ -33,14 +33,7 @@ namespace BelleChao.Web.Controllers
            _signInManager = signInManager;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            var restaurants = await _restaurantRepo.GetRestaurants();
-            return Ok(restaurants);
-        }
-
-        [HttpPost]
-        [Route("register")]
+        [HttpPost("register")]
         public  async Task<IActionResult> Register(UserTOPostDTO model)
         {
             if (ModelState.IsValid)
@@ -51,8 +44,7 @@ namespace BelleChao.Web.Controllers
             return BadRequest();
         }
 
-        [HttpPost]
-        [Route("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(UserToLoginDTO model)
         {
             if (ModelState.IsValid)
@@ -67,6 +59,14 @@ namespace BelleChao.Web.Controllers
                 }
             }
             return BadRequest();
+        }
+
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
         }
     }
 }
